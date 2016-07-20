@@ -47,7 +47,13 @@ const getValidationErrors = (schema, model) => Object.keys(schema).reduce((acc, 
 
 const validateSchema = (schema) => (WrappedComponent) => {
   const validated = (props) => {
-    const validationErrors = getValidationErrors(schema, props.model)
+    let validationErrors;
+    if (typeof props.validationSchema !== 'undefined'){
+      validationErrors = getValidationErrors(props.validationSchema, props.model)
+    }
+    else {
+      validationErrors = getValidationErrors(schema, props.model)
+    }
 
     return React.createElement(WrappedComponent, assign({}, props, {
       schema: validationErrors,
