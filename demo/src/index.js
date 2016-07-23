@@ -8,7 +8,7 @@ import compose from 'react-reformed/lib/compose'
 import syncWith from 'react-reformed/lib/syncWith'
 import validateSchema from 'react-reformed/lib/validateSchema'
 
-const contains = (x, xs) => xs && !!~xs.indexOf(x)
+const contains = (x, xs) => xs && !!~xs.indexOf(x);
 
 /*
  * Here you can create your base form component.
@@ -20,8 +20,8 @@ const MyForm = ({ bindInput, bindToChangeEvent, model, onSubmit, setProperty, sc
     e.preventDefault()
     onSubmit(model)
   }
-  const isUsernameValid = schema.fields.username.isValid
-  const isPasswordValid = schema.fields.password.isValid
+  const isUsernameValid = schema.fields.username.isValid;
+  const isPasswordValid = schema.fields.password.isValid;
 
   return (
     <form onSubmit={submitHandler}>
@@ -63,7 +63,7 @@ const MyForm = ({ bindInput, bindToChangeEvent, model, onSubmit, setProperty, sc
         View Source Code
       </button>
     </form>
-  )
+  );
 }
 
 /*
@@ -86,11 +86,14 @@ const createFormContainer = compose(
       // note: my `test` implementation is super basic, `fail` can
       // only be used synchronously. Write your own to suit your needs!
       test: (value, fail) => {
+        var arbitraryRegex = /[0-9]+/;
+        if (arbitraryRegex.match(value))
         if (!value || value.length < 5) {
-          return fail('Password must be at least 5 characters')
+          return fail('Password must be at least 5 characters');
         } else if (value.length > 12) {
-          return fail('Password must be no longer than 12 characters')
+          return fail('Password must be no longer than 12 characters');
         }
+        // return Promise.reject();
       }
     }
   }),
@@ -100,7 +103,7 @@ const createFormContainer = compose(
     (key) => JSON.parse(localStorage.getItem(key)),
     (key, value) => localStorage.setItem(key, JSON.stringify(value))
   ),
-)
+);
 
 /**
  * Oh, yeah, that `createFormContainer` is just a function... so we can
@@ -120,8 +123,8 @@ const displayFormState = (WrappedComponent) => {
         <pre>{JSON.stringify(props.schema, null, 2)}</pre>
       </div>
     )
-  }
-}
+  };
+};
 
 /*
  * Time to create our final form component... this is what you'd
@@ -135,14 +138,14 @@ const displayFormState = (WrappedComponent) => {
 const MyFormContainer = compose(
   createFormContainer,
   displayFormState
-)(MyForm)
+)(MyForm);
 
 /*
  * And... render our form.
  */
 class App extends React.Component {
   _onSubmit = (model) => {
-    window.location = 'https://github.com/davezuko/react-reformed/blob/master/demo/src/index.js'
+    window.location = 'https://github.com/davezuko/react-reformed/blob/master/demo/src/index.js';
   }
 
   render () {
@@ -167,4 +170,4 @@ class App extends React.Component {
   }
 }
 
-ReactDOM.render(<App />, window.root)
+ReactDOM.render(<App />, window.root);

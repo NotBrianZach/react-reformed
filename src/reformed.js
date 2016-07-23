@@ -31,17 +31,18 @@ const makeWrapper = (middleware) => (WrappedComponent) => {
     // you should just use `setProperty` or `setModel`. Or, better yet,
     // extend `reformed` to supply the bindings that match your needs.
     bindToChangeEvent = (e) => {
-      const { name, type, value } = e.target
+      const { checked, name, type, value } = e.target
 
       if (type === 'checkbox') {
         const oldCheckboxValue = this.state.model[name] || []
         const newCheckboxValue = e.target.checked
           ? oldCheckboxValue.concat(value)
-          : oldCheckboxValue.filter(v => v !== value)
+          : oldCheckboxValue.filter(v => v !== value);
 
-        this.setProperty(name, newCheckboxValue)
-      } else {
-        this.setProperty(name, value)
+        this.setProperty(name, newCheckboxValue);
+      }
+      else {
+        this.setProperty(name, value);
       }
     }
 
@@ -50,6 +51,27 @@ const makeWrapper = (middleware) => (WrappedComponent) => {
         name,
         value: this.state.model[name],
         onChange: this.bindToChangeEvent,
+      };
+    }
+
+    bindToRadioChangeEvent = (e) => {
+      const { checked, name, type, value } = e.target
+      if (type === 'radio') {
+        this.state.model[name].forEach((val) => {
+          this.setProperty(name + value, false);
+        });
+        this.setProperty(name + value, true);
+      }
+      else {
+        console.log('Error, bindToRadioChangeEvent should only be used on radio inputs');
+      }
+    }
+
+    bindRadioInput = (name, value) => {
+      return {
+        name: [...this.state.model[name], value],
+        checked: this.state.model[name + value],
+        onChange: this.bindToRadioChangeEvent,
       }
     }
 
@@ -57,6 +79,8 @@ const makeWrapper = (middleware) => (WrappedComponent) => {
       const nextProps = assign({}, this.props, {
         bindInput: this.bindInput,
         bindToChangeEvent: this.bindToChangeEvent,
+        bindRadioInput: this.bindInput,
+        bindToRadioChangeEvent: this.bindToChangeEvent,
         model: this.state.model,
         setProperty: this.setProperty,
         setModel: this.setModel,
@@ -68,10 +92,10 @@ const makeWrapper = (middleware) => (WrappedComponent) => {
 
       return React.createElement(WrappedComponent, finalProps)
     }
-  }
+  };
 
-  FormWrapper.displayName = `Reformed(${getComponentName(WrappedComponent)})`
-  return hoistNonReactStatics(FormWrapper, WrappedComponent)
+  FormWrapper.displayName = `Reformed(${getComponentName(WrappedComponent)})`;
+  return hoistNonReactStatics(FormWrapper, WrappedComponent);
 }
 
-export default makeWrapper
+export default makeWrapper;
