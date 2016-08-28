@@ -13,7 +13,7 @@ const makeWrapper = (middleware) => (WrappedComponent) => {
       super(props, ctx);
       this.state = {
         model: props.initialModel || {},
-        isModelModified: props.isModelModified || false,
+        isModelModified: false,
       };
     }
 
@@ -25,6 +25,8 @@ const makeWrapper = (middleware) => (WrappedComponent) => {
     setProperty = (prop, value) => {
       return this.setModel(assign({}, this.state.model, {
         [prop]: value,
+        [prop + 'IsModified']: true,
+        ['isModelModified']: true
       }));
     }
 
