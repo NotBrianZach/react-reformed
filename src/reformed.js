@@ -1,7 +1,7 @@
-import React from 'react'
-import assign from 'object-assign'
-import hoistNonReactStatics from 'hoist-non-react-statics'
-import getComponentName from './_internal/getComponentName'
+import React from 'react';
+import assign from 'object-assign';
+import hoistNonReactStatics from 'hoist-non-react-statics';
+import getComponentName from './_internal/getComponentName';
 
 const makeWrapper = (middleware) => (WrappedComponent) => {
   class FormWrapper extends React.Component {
@@ -10,31 +10,32 @@ const makeWrapper = (middleware) => (WrappedComponent) => {
     }
 
     constructor (props, ctx) {
-      super(props, ctx)
+      super(props, ctx);
       this.state = {
         model: props.initialModel || {},
-      }
+        isModelModified: props.isModelModified || false,
+      };
     }
 
     setModel = (model) => {
-      this.setState({ model })
-      return model
+      this.setState({ model });
+      return model;
     }
 
     setProperty = (prop, value) => {
       return this.setModel(assign({}, this.state.model, {
         [prop]: value,
-      }))
+      }));
     }
 
     // This, of course, does not handle all possible inputs. In such cases,
     // you should just use `setProperty` or `setModel`. Or, better yet,
     // extend `reformed` to supply the bindings that match your needs.
     bindToChangeEvent = (e) => {
-      const { checked, name, type, value } = e.target
+      const { checked, name, type, value } = e.target;
 
       if (type === 'checkbox') {
-        const oldCheckboxValue = this.state.model[name] || []
+        const oldCheckboxValue = this.state.model[name] || [];
         const newCheckboxValue = e.target.checked
           ? oldCheckboxValue.concat(value)
           : oldCheckboxValue.filter(v => v !== value);
@@ -54,6 +55,14 @@ const makeWrapper = (middleware) => (WrappedComponent) => {
       };
     }
 
+    bindSelectInput = (name, values) => {
+      return {
+        name,
+        value: this.state.model[name],
+        onChange: this.bindToChangeEvent,
+      };
+    }
+
     bindToRadioChangeEvent = (e) => {
       const { checked, name, type, value } = e.target
       if (type === 'radio') {
@@ -63,7 +72,7 @@ const makeWrapper = (middleware) => (WrappedComponent) => {
         this.setProperty(name + value, true);
       }
       else {
-        console.log('Error, bindToRadioChangeEvent should only be used on radio inputs');
+        throw('Error, bindToRadioChangeEvent should only be used on radio inputs');
       }
     }
 
@@ -85,7 +94,7 @@ const makeWrapper = (middleware) => (WrappedComponent) => {
         setProperty: this.setProperty,
         setModel: this.setModel,
       })
-      // SIDE EFFECT-ABLE. Just for developer convenience and expirementation.
+      // SIDE EFFECT-ABLE. Just for developer convenience and experimentation.
       const finalProps = typeof middleware === 'function'
         ? middleware(nextProps)
         : nextProps

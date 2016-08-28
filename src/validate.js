@@ -16,15 +16,15 @@ const validate = (rules) => (WrappedComponent) => {
     return React.createElement(WrappedComponent, assign({}, props, {
       isValid: !validationErrors.length,
       validationErrors,
-    }))
+    }));
   }
-  validated.displayName = `Validate(${getComponentName(WrappedComponent)})`
-  return hoistNonReactStatics(validated, WrappedComponent)
+  validated.displayName = `Validate(${getComponentName(WrappedComponent)})`;
+  return hoistNonReactStatics(validated, WrappedComponent);
 }
 
 export const isRequired = (prop, message = `${prop} is a required field`) => ([
   (model) => !!model[prop],
   message,
-])
+]);
 
-export default validate
+export default validate;
